@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deyan-deployment-123
+#  namespace: app-space
+  labels:
+    app: deyan-app-123
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: deyan-app-123
+  template:
+    metadata:
+      labels:
+        app: deyan-app-123
+    spec:
+      containers:
+      - name: deyan-container-123
+        image: 722377226063.dkr.ecr.eu-central-1.amazonaws.com/deyanatanasov:latest
+        ports:
+        - containerPort: 80
+

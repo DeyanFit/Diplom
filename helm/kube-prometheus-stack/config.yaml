@@ -1,0 +1,55 @@
+alertmanager:
+  config:
+      global:
+        resolve_timeout: 5m  
+      route:
+        group_by: ['namespace']  
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 1h
+        receiver: 'discord-none'  
+        routes:
+          - matchers:
+              - 'severity=critical'
+            receiver: 'critical-alert'
+          - matchers:
+              - 'severity=warning'
+            receiver: 'warning-alert'
+          - matchers:
+              - 'severity=none'
+            receiver: 'discord-none'  
+      inhibit_rules:
+        - source_matchers:
+            - 'severity = critical'
+          target_matchers:
+            - 'severity =~ warning|none'
+          equal:
+            - 'namespace'
+            - 'alertname'
+        - source_matchers:
+            - 'severity = warning'
+          target_matchers:
+            - 'severity = none'
+          equal:
+            - 'namespace'
+            - 'alertname'
+      receivers:
+        - name: 'discord-none'
+          webhook_configs:
+            - send_resolved: true
+              url: 'https://discord.com/api/webhooks/1203360043588657182/wwPdLo-4Do5Jtxw5u4qOeOX7MF6PCxoK1pzO4_BjsCV8rqILwXlxfLPxikColnbxmjzl'
+              title: 'Alert Notification'
+              message: '{{ .CommonLabels.alertname }} has triggered'
+        - name: 'critical-alert'
+          webhook_configs:
+            - send_resolved: true
+              url: 'https://discord.com/api/webhooks/1203425911366483978/m28CAhgaMC4H9fdVfJNaDiNVsVnPC2UsPbweK7KiRiKwAr8nYa2NxCrUF_he-41T0osD'
+              title: 'Alert Notification'
+              message: '{{ .CommonLabels.alertname }} has triggered'
+        - name: 'warning-alert'
+          webhook_configs:
+            - send_resolved: true
+              url: 'https://discord.com/api/webhooks/1203425516137349130/OhJ9UmDgrwEGAsrrYLasxQyEVUQ7Kra-yuIMbk8pjvD-ZDjIfQMbbc-XMCfwa009k2AL'
+              title: 'Alert Notification'
+              message: '{{ .CommonLabels.alertname }} has triggered'
+

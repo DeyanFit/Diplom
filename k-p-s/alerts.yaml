@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: global-alert-manager-configuration
+  namespace: monitoring
+  labels:
+    release: kube-prometheus
+spec:
+  receivers:
+    - name: alerts
+      slackConfigs:
+        - channel: "#alerts"
+          sendResolved: true
+          text: "<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}\nmessage: {{ .CommonAnnotations.message }}"
+  route:  
+    matchers:
+      - name: severity
+        value: "critical|warning|none"
+        matchType: "=~"
+    groupBy: ["job", "severity"]  
+    groupWait: 30s
+    receiver: alerts
+    groupInterval: 6h
+    repeatInterval: 6h
+

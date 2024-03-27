@@ -1,0 +1,31 @@
+stages:
+  - deploy
+
+variables:
+#  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID} # not needed?
+#  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY} # not needed?
+#  KUBE_CONFIG: ${KUBE_CONFIG}
+
+image: dtzar/helm-kubectl
+
+deploy:
+  stage: deploy
+  script:
+    - aws eks update-kubeconfig --region eu-central-1 --profile deyan-atanasov --name deyan-cluster-234
+    - kubectl config current-context
+#    - kubectl config use-context $KUBE_CONFIG
+    - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    - helm repo update
+#    - echo "helm repo updated"
+    - kubectl create namespace monitoring || true
+    - helm install kube-prometheus prometheus-community/kube-prometheus-stack -n monitoring
+    - sleep 300 # wait for 5 minutes to ensure et is installed/upgraded
+    - helm upgrade -f values.yaml kube-prometheus prometheus-community/kube-prometheus-stack -n monitoring
+    - sleep 300 # wait for 5 minutes to ensure et is installed/upgraded
+    - kubectl apply -f rules.yaml
+    - kubectl apply -f alerts.yaml
+  only:
+    - main
+  tags:
+    - ci-shared
+  when: manual

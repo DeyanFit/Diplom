@@ -1,0 +1,24 @@
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+
+alertmanager:
+    config:
+      global:
+        resolve_timeout: 5m
+        slack_api_url: https://hooks.slack.com/services/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
+    alertmanagerSpec:
+      alertmanagerConfigNamespaceSelector:
+      alertmanagerConfigSelector:
+      alertmanagerConfigMatcherStrategy:
+        type: None
+grafana:
+  adminPassword: admin
+  enabled: true
+  namespaceOverride: "monitoring"
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.deyan.itgix.eu
