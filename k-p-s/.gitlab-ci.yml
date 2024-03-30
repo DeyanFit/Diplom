@@ -11,7 +11,7 @@ image: dtzar/helm-kubectl
 deploy:
   stage: deploy
   script:
-    - aws eks update-kubeconfig --region eu-central-1 --profile deyan-atanasov --name deyan-cluster-234
+    - aws eks update-kubeconfig --region  --profile  --name 
     - kubectl config current-context
 #    - kubectl config use-context $KUBE_CONFIG
     - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
